@@ -1,9 +1,9 @@
 <script>
 	import { enhance } from '$app/forms';
 
-	/** @typedef {import('@prisma/client').Todo} Todo */
+	/** @typedef {import('@prisma/client').Todo} ITodo */
 
-	/** @type Todo */
+	/** @type ITodo */
 	export let todo;
 
 	/** @type HTMLFormElement */
@@ -12,9 +12,9 @@
 
 	const onSubmit = () => {
 		isLoading = true;
+		/** @param {{ result: import('@sveltejs/kit').ActionResult<ITodo> }} actionResult */
 		return async ({ result }) => {
 			if (result.type === 'success' && result.data) {
-				// @ts-expect-error
 				todo = result.data;
 			}
 			isLoading = false;
@@ -22,17 +22,11 @@
 	};
 </script>
 
-<form
-	class='card'
-	bind:this={form}
-	method='post'
-	action='?/update'
-	use:enhance={onSubmit}
->
+<form class="card" bind:this={form} method="post" action="?/update" use:enhance={onSubmit}>
 	<label>
 		<input
-			type='checkbox'
-			name='done'
+			type="checkbox"
+			name="done"
 			checked={todo.done}
 			on:change={() => form.dispatchEvent(new Event('submit', { cancelable: true }))}
 		/>
@@ -41,8 +35,8 @@
 	<label>
 		Title
 		<input
-			name='title'
-			type='text'
+			name="title"
+			type="text"
 			value={todo.title}
 			on:blur={() => form.dispatchEvent(new Event('submit', { cancelable: true }))}
 			required
@@ -52,14 +46,14 @@
 		Description
 		<input
 			name={'description'}
-			type={'text'}
+			type="text"
 			value={todo.description || ''}
 			on:blur={() => form.dispatchEvent(new Event('submit', { cancelable: true }))}
 			required
 		/>
 	</label>
-	<input type='hidden' name='id' value={todo.id} />
+	<input type="hidden" name="id" value={todo.id} />
 	{#if isLoading}
-		<div class='loading-overlay' />
+		<div class="loading-overlay" />
 	{/if}
 </form>

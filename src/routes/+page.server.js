@@ -18,9 +18,9 @@ export const actions = {
 	create: async ({ request }) => {
 		/** @type {TodoFormData} */
 		let data = Object.fromEntries(await request.formData());
-
-		// @ts-ignore
+		// @ts-expect-error
 		data.done = data.done === 'on';
+		// @ts-expect-error
 		return await db.todo.create({ data });
 	},
 	update: async ({ request }) => {
@@ -29,7 +29,7 @@ export const actions = {
 		const { id } = data;
 		delete data.id;
 
-		// @ts-ignore
+		// @ts-expect-error
 		data.done = data.done === 'on';
 
 		return await db.todo.update({
