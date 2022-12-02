@@ -1,5 +1,15 @@
 import db from '../../prisma/db';
+import Filter from 'bad-words';
 
+const filter = new Filter();
+
+const cleanData = (validatedData) => {
+	validatedData.title = filter.clean(validatedData.title);
+	if (validatedData.description) {
+		validatedData.description = filter.clean(validatedData.description || "");
+	}
+	return validatedData;
+}
 /** @type {import('./$types').PageServerLoad} */
 export async function load() {
 	return { todos: await db.todo.findMany() };
@@ -21,7 +31,7 @@ export const actions = {
 		// @ts-expect-error
 		data.done = data.done === 'on';
 		// @ts-expect-error
-		return await db.todo.create({ data });
+		return await db.todo.create({ data: cleanData(data) });
 	},
 	update: async ({ request }) => {
 		/** @type {TodoFormData} */
@@ -34,7 +44,7 @@ export const actions = {
 
 		return await db.todo.update({
 			where: { id: parseInt(id || '') },
-			data
+			data: cleanData(data)
 		});
 	}
 };
